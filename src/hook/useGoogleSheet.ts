@@ -22,7 +22,7 @@ const useGoogleSheet = (sheetId: string): UseGoogleSheetResult => {
             try {
                 const result = await fetchDataFromSheet(sheetId);
 
-                if (result.length > 0) {
+                if (Array.isArray(result) && result.length > 0) {
                     setHeader(result[0]);  // Birinchi qatorni ustun nomlari sifatida saqlaymiz
                     setBody(result.slice(1));  // Qolganlarini ma'lumot sifatida saqlaymiz
                 }
@@ -35,7 +35,7 @@ const useGoogleSheet = (sheetId: string): UseGoogleSheetResult => {
         };
 
         fetchSheetData();
-    }, []);
+    }, [sheetId]);  // `sheetId` o'zgarganda yana ma'lumotlarni olish
 
     return { header, body, loading, error };  // `header` va `body` qaytaramiz
 };

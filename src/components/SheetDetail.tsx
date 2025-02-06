@@ -1,19 +1,16 @@
 
-import { Table } from 'antd';
+import { Spin, Table } from 'antd';
 import useGoogleSheet from '../hook/useGoogleSheet';
 import { useLocation, useParams } from 'react-router-dom';
 
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import axios from 'axios';
+import { sendTelegramMessage } from '../services/telegramService';
 
 const SheetDetail = () => {
-
-    const botToken = import.meta.env.VITE_BOT_TOKEN;
-    const chatId = import.meta.env.VITE_CHAT_ID;
-
     const { id } = useParams();
     const location = useLocation();
     const dataInfo = location.state;
+    console.log(dataInfo);
 
 
     const { header, body, loading, error } = useGoogleSheet(id as string);
@@ -28,7 +25,6 @@ const SheetDetail = () => {
 
         return dates.at(-1);
     }
-
 
     const extractDataByDate = () => {
 
@@ -46,21 +42,6 @@ const SheetDetail = () => {
         return result;
     };
 
-
-    const sendTelegramMessage = async (message: string) => {
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-        try {
-            await axios.post(url, {
-                chat_id: chatId,
-                text: message,
-            });
-            console.log("Message sent successfully!");
-        } catch (error) {
-            console.error("Error sending message: ", error);
-        }
-    };
-
     const sendAttendanceUpdate = () => {
         const attendanceData = extractDataByDate();
         let message = `📅 Davomat: ${getLatestDate()}:\n\n`;
@@ -76,12 +57,17 @@ const SheetDetail = () => {
             message += `${index + 1}. ${entry.fio} ${entry.status == 'Keldi' ? '✅' : '❌'} \n`;
         });
 
+        sendTelegramMessage({ text: message });
 
-        sendTelegramMessage(message);
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="loader-container">
+                <Spin size="large" />
+                <p className="loading-text">Ma'lumotlar yuklanmoqda...</p>
+            </div>
+        );
     }
 
     if (error) {
@@ -111,6 +97,26 @@ const SheetDetail = () => {
             ...rowData,
         };
     });
+
+
+
+    // Automatic sending
+    function shouldRunOnDay(dayType: string) {
+        const today = new Date();
+        const day = today.getDay();
+        return (day % 2 === 0 && dayType === "Juft") || (day % 2 !== 0 && dayType === "Toq");
+    }
+
+    setInterval(() => {
+        const now = new Date();
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+
+        if (hour === 10 && minute === 0 && shouldRunOnDay(dataInfo.dars_kunlari)) {
+            sendAttendanceUpdate();
+        }
+    }, 60 * 1000);
+
 
     return (
         <div className='container overflow-x-scroll pt-20'>

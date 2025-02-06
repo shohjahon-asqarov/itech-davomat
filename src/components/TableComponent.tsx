@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Table } from 'antd';  // Ant Design Table komponentini import qilish
+import { Table, Spin } from 'antd'; // Ant Design Table va Spin komponentlarini import qilish
 import useGoogleSheet from '../hook/useGoogleSheet';
 import { EyeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -10,15 +9,21 @@ const SPREADSHEET_ID = import.meta.env.VITE_SPREADSHEET_ID!;
 const TableComponent: React.FC = () => {
     const navigate = useNavigate();
 
-    const { header, body, loading, error } = useGoogleSheet(SPREADSHEET_ID);  // useGoogleSheet hook'ini chaqiramiz
-
+    // useGoogleSheet hook'ini chaqirish
+    const { header, body, loading, error } = useGoogleSheet(SPREADSHEET_ID);
 
     const handleNavigate = (data: any) => {
         navigate(`/sheet-id/${data.sheet_id}`, { state: data });
     };
 
+    // Agar loading holati bo'lsa, loading indikatorini ko'rsatamiz
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="loader-container">
+                <Spin size="large" />
+                <p className="loading-text">Ma'lumotlar yuklanmoqda...</p>
+            </div>
+        );
     }
 
     if (error) {
@@ -48,7 +53,6 @@ const TableComponent: React.FC = () => {
 
     const extendedColumns = [...columns, additionalColumn];
 
-
     const dataSource = body.map((row, index) => {
         const rowData: any = {};
         row.forEach((cell, cellIndex) => {
@@ -62,15 +66,15 @@ const TableComponent: React.FC = () => {
     });
 
     return (
-        <div className='container overflow-x-scroll py-20'>
+        <div className="container overflow-x-scroll py-20 table-container">
             <Table
                 columns={extendedColumns}
                 dataSource={dataSource}
                 loading={loading}
                 pagination={false}
                 bordered
-                title={() => <h2 className='text-center text-2xl font-medium'>iTech Academy </h2>}
-                className='min-w-max'
+                title={() => <h2 className="text-center text-2xl font-medium">iTech Academy</h2>}
+                className="min-w-max"
             />
         </div>
     );
