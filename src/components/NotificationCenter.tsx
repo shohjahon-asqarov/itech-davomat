@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Badge, Dropdown, List, Button, Typography, Empty } from 'antd';
 import { BellOutlined, CheckOutlined, DeleteOutlined } from '@ant-design/icons';
 
@@ -44,7 +44,7 @@ const NotificationCenter: React.FC = () => {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
+    setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, read: true } : n)
     );
   };
@@ -76,10 +76,10 @@ const NotificationCenter: React.FC = () => {
           </Button>
         )}
       </div>
-      
+
       {notifications.length === 0 ? (
-        <Empty 
-          description="Bildirishnomalar yo'q" 
+        <Empty
+          description="Bildirishnomalar yo'q"
           style={{ padding: '20px' }}
         />
       ) : (
@@ -87,23 +87,23 @@ const NotificationCenter: React.FC = () => {
           dataSource={notifications}
           renderItem={(item) => (
             <List.Item
-              style={{ 
+              style={{
                 padding: '12px 16px',
                 backgroundColor: item.read ? 'transparent' : '#f6ffed',
                 borderLeft: `3px solid ${getTypeColor(item.type)}`
               }}
               actions={[
                 !item.read && (
-                  <Button 
-                    type="text" 
-                    size="small" 
+                  <Button
+                    type="text"
+                    size="small"
                     icon={<CheckOutlined />}
                     onClick={() => markAsRead(item.id)}
                   />
                 ),
-                <Button 
-                  type="text" 
-                  size="small" 
+                <Button
+                  type="text"
+                  size="small"
                   icon={<DeleteOutlined />}
                   onClick={() => deleteNotification(item.id)}
                   danger
@@ -136,15 +136,15 @@ const NotificationCenter: React.FC = () => {
   );
 
   return (
-    <Dropdown 
-      overlay={notificationMenu} 
-      trigger={['click']} 
+    <Dropdown
+      overlay={notificationMenu}
+      trigger={['click']}
       placement="bottomRight"
     >
       <Badge count={unreadCount} size="small">
-        <Button 
-          type="text" 
-          icon={<BellOutlined />} 
+        <Button
+          type="text"
+          icon={<BellOutlined />}
           style={{ fontSize: '16px' }}
         />
       </Badge>

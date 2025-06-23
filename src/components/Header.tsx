@@ -1,13 +1,14 @@
 import React from 'react';
-import { Layout, Avatar, Dropdown, Space, Typography, Button } from 'antd';
+import { Layout, Avatar, Dropdown, Space, Typography } from 'antd';
 import { UserOutlined, SettingOutlined, LogoutOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import NotificationCenter from './NotificationCenter';
+import type { MenuProps } from 'antd';
 
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;
 
 const Header: React.FC = () => {
-  const menuItems = [
+  const menuItems: MenuProps['items'] = [
     {
       key: 'profile',
       icon: <UserOutlined />,
@@ -41,15 +42,15 @@ const Header: React.FC = () => {
           Xush kelibsiz, iTech Academy boshqaruv paneliga
         </Text>
       </div>
-      
+
       <Space size="large">
         <NotificationCenter />
-        
+
         <Dropdown menu={{ items: menuItems }} placement="bottomRight">
           <Space className="cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors">
-            <Avatar 
-              icon={<UserOutlined />} 
-              size="small" 
+            <Avatar
+              icon={<UserOutlined />}
+              size="small"
               style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}
             />
             <Text className="font-medium">Admin</Text>

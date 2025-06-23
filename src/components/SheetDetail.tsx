@@ -151,7 +151,7 @@ const SheetDetail: React.FC = () => {
     dataIndex: `col_${index}`,
     key: `col_${index}`,
     align: 'center' as const,
-    render: (value: any, record: any, rowIndex: number) => {
+    render: (value: any, _record: any, rowIndex: number) => {
       if (index === 0) {
         return (
           <div className="flex items-center space-x-2">
@@ -372,8 +372,9 @@ const SheetDetail: React.FC = () => {
           pagination={false}
           scroll={{ x: 'max-content' }}
           className="custom-attendance-table"
-          rowClassName={(record, index) => {
-            const status = record[`col_${header.indexOf(getLatestDate())}`];
+          rowClassName={(_record, _index) => {
+            const colKey = `col_${header.indexOf(getLatestDate() ?? '')}`;
+            const status = _record[colKey] ?? '';
             return status === 'Keldi' ? 'bg-green-50' :
               status === 'Kelmadi' ? 'bg-red-50' : '';
           }}

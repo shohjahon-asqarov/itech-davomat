@@ -42,7 +42,7 @@ import {
 } from '@ant-design/icons';
 import useGoogleSheet from '../hook/useGoogleSheet';
 import { useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -62,7 +62,7 @@ interface GroupData {
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { header, body, loading, error } = useGoogleSheet(SPREADSHEET_ID);
+  const { body, loading, error } = useGoogleSheet(SPREADSHEET_ID);
 
   // State management
   const [searchText, setSearchText] = useState('');
@@ -72,7 +72,7 @@ const Dashboard: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [refreshInterval, setRefreshInterval] = useState(30);
-  const [dateRange, setDateRange] = useState<any[]>([]);
+  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([null, null]);
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
 
@@ -186,8 +186,8 @@ const Dashboard: React.FC = () => {
     const mentors = [...new Set(processedData.map(item => item.mentor))].length;
     const todayGroups = processedData.filter(item => {
       const today = new Date().getDay();
-      const isToday = (today % 2 === 0 && item.dars_kunlari === "Juft") || 
-                     (today % 2 !== 0 && item.dars_kunlari === "Toq");
+      const isToday = (today % 2 === 0 && item.dars_kunlari === "Juft") ||
+        (today % 2 !== 0 && item.dars_kunlari === "Toq");
       return isToday;
     }).length;
 
@@ -221,9 +221,9 @@ const Dashboard: React.FC = () => {
               </div>
             }
           >
-            <Button 
-              type="primary" 
-              icon={<ReloadOutlined />} 
+            <Button
+              type="primary"
+              icon={<ReloadOutlined />}
               onClick={() => window.location.reload()}
             >
               Qayta yuklash
@@ -246,8 +246,8 @@ const Dashboard: React.FC = () => {
             {index + 1}
           </Avatar>
           <span className="group-name">{text}</span>
-          <Badge 
-            count={record.dars_kunlari} 
+          <Badge
+            count={record.dars_kunlari}
             style={{ backgroundColor: record.dars_kunlari === 'Toq' ? '#1890ff' : '#722ed1' }}
           />
         </div>
@@ -296,12 +296,12 @@ const Dashboard: React.FC = () => {
       key: 'status',
       render: (record: GroupData) => {
         const today = new Date().getDay();
-        const isToday = (today % 2 === 0 && record.dars_kunlari === "Juft") || 
-                       (today % 2 !== 0 && record.dars_kunlari === "Toq");
+        const isToday = (today % 2 === 0 && record.dars_kunlari === "Juft") ||
+          (today % 2 !== 0 && record.dars_kunlari === "Toq");
         return (
-          <Badge 
-            status={isToday ? "processing" : "default"} 
-            text={isToday ? "Bugungi dars" : "Kutilmoqda"} 
+          <Badge
+            status={isToday ? "processing" : "default"}
+            text={isToday ? "Bugungi dars" : "Kutilmoqda"}
           />
         );
       },
@@ -386,10 +386,10 @@ const Dashboard: React.FC = () => {
               value={stats.totalGroups}
               prefix={<TeamOutlined />}
               suffix={
-                <Progress 
-                  type="circle" 
-                  percent={100} 
-                  width={30} 
+                <Progress
+                  type="circle"
+                  percent={100}
+                  width={30}
                   showInfo={false}
                   strokeColor="#1890ff"
                 />
@@ -464,13 +464,13 @@ const Dashboard: React.FC = () => {
 
           <div className="view-mode-switch">
             <Button.Group>
-              <Button 
+              <Button
                 type={viewMode === 'table' ? 'primary' : 'default'}
                 onClick={() => setViewMode('table')}
               >
                 Jadval
               </Button>
-              <Button 
+              <Button
                 type={viewMode === 'card' ? 'primary' : 'default'}
                 onClick={() => setViewMode('card')}
               >
@@ -503,7 +503,7 @@ const Dashboard: React.FC = () => {
               </Badge>
             </Space>
           </div>
-          
+
           <Table
             columns={columns}
             dataSource={filteredData}
@@ -597,7 +597,7 @@ const Dashboard: React.FC = () => {
             <h4>Sana oralig'i</h4>
             <RangePicker
               value={dateRange}
-              onChange={setDateRange}
+              onChange={(dates) => setDateRange(dates as [Dayjs | null, Dayjs | null])}
               style={{ width: '100%' }}
             />
           </div>
