@@ -1,0 +1,317 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Enhanced Custom styles */
+.container {
+  @apply max-w-[1400px] mx-auto px-5;
+}
+
+/* Enhanced Loader styles */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.ant-spin-dot {
+  font-size: 60px;
+}
+
+.loading-text {
+  font-size: 24px;
+  color: #ffffff;
+  margin-top: 15px;
+  animation: fadeIn 1.5s ease-in-out;
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Enhanced Table animations */
+.table-container {
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Enhanced Card hover effects */
+.ant-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ant-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Sidebar styles */
+.ant-layout-sider {
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+  border-radius: 0 20px 20px 0;
+}
+
+/* Enhanced Header styles */
+.ant-layout-header {
+  border-bottom: 1px solid #f0f0f0;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Enhanced Menu styles */
+.ant-menu-item {
+  margin: 6px 12px !important;
+  border-radius: 12px !important;
+  height: 52px !important;
+  line-height: 52px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ant-menu-item:hover {
+  transform: translateX(4px);
+}
+
+.ant-menu-item-selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.ant-menu-item-selected .anticon {
+  color: white !important;
+}
+
+/* Enhanced Button styles */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+}
+
+/* Enhanced Statistics card styles */
+.ant-statistic-content {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.ant-statistic-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Enhanced Table styles */
+.custom-table .ant-table-thead > tr > th {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  font-weight: 700;
+  color: #1f2937;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 16px;
+}
+
+.custom-table .ant-table-tbody > tr {
+  transition: all 0.3s ease;
+}
+
+.custom-table .ant-table-tbody > tr:hover > td {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  transform: scale(1.01);
+}
+
+.custom-attendance-table .ant-table-thead > tr > th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 700;
+  border: none;
+  font-size: 16px;
+}
+
+.custom-attendance-table .ant-table-tbody > tr {
+  transition: all 0.3s ease;
+}
+
+/* Enhanced Progress bar styles */
+.ant-progress-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.ant-progress-success-bg {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%) !important;
+}
+
+/* Enhanced Tag styles */
+.ant-tag {
+  border-radius: 20px;
+  font-weight: 600;
+  padding: 6px 16px;
+  font-size: 14px;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Pagination styles */
+.custom-pagination .ant-pagination-item {
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.custom-pagination .ant-pagination-item:hover {
+  border-color: #667eea;
+  transform: translateY(-1px);
+}
+
+.custom-pagination .ant-pagination-item-active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+}
+
+/* Enhanced Badge styles */
+.ant-badge-count {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+}
+
+/* Enhanced Timeline styles */
+.ant-timeline-item-head {
+  border-width: 3px;
+}
+
+.ant-timeline-item-content {
+  font-weight: 500;
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+  .ant-layout-sider {
+    position: fixed !important;
+    height: 100vh;
+    z-index: 999;
+    border-radius: 0;
+  }
+  
+  .ant-layout-content {
+    margin-left: 0 !important;
+  }
+  
+  .ant-card {
+    margin: 8px;
+  }
+  
+  .ant-statistic-content {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .ant-statistic-content {
+    font-size: 20px;
+  }
+  
+  .ant-card {
+    margin: 4px;
+  }
+}
+
+/* Enhanced Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* Enhanced Animation utilities */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+  40%, 43% { transform: translate3d(0, -8px, 0); }
+  70% { transform: translate3d(0, -4px, 0); }
+  90% { transform: translate3d(0, -2px, 0); }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Enhanced Gradient backgrounds */
+.gradient-bg-1 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-bg-2 {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.gradient-bg-3 {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.gradient-bg-4 {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+/* Enhanced Glass morphism effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Enhanced Loading states */
+.skeleton-loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
