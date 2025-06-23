@@ -5,7 +5,6 @@ import {
   TeamOutlined, 
   FileTextOutlined,
   SettingOutlined,
-  BookOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined
 } from '@ant-design/icons';
@@ -22,7 +21,7 @@ const Sidebar: React.FC = () => {
     {
       key: '/',
       icon: <DashboardOutlined />,
-      label: 'Bosh sahifa',
+      label: 'Dashboard',
     },
     {
       key: '/groups',
@@ -33,11 +32,6 @@ const Sidebar: React.FC = () => {
       key: '/attendance',
       icon: <FileTextOutlined />,
       label: 'Davomat',
-    },
-    {
-      key: '/courses',
-      icon: <BookOutlined />,
-      label: 'Kurslar',
     },
     {
       key: '/settings',
@@ -52,40 +46,32 @@ const Sidebar: React.FC = () => {
 
   return (
     <Sider 
-      width={250} 
+      width={220} 
       collapsible
       collapsed={collapsed}
       onCollapse={setCollapsed}
-      className="bg-white border-r border-gray-200"
+      className="sidebar"
       breakpoint="lg"
-      collapsedWidth="80"
-      trigger={null}
+      collapsedWidth="70"
     >
-      {/* Header */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+      {/* Logo */}
+      <div className="sidebar-logo">
         {!collapsed ? (
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">iT</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-gray-800">iTech</h1>
-              <p className="text-xs text-gray-500 -mt-1">Academy</p>
+          <div className="logo-expanded">
+            <div className="logo-icon">iT</div>
+            <div className="logo-text">
+              <span className="logo-title">iTech</span>
+              <span className="logo-subtitle">Academy</span>
             </div>
           </div>
         ) : (
-          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto">
-            <span className="text-white font-bold text-sm">iT</span>
-          </div>
+          <div className="logo-collapsed">iT</div>
         )}
       </div>
 
-      {/* Collapse Toggle */}
-      <div className="p-4 border-b border-gray-100">
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center h-8 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
-        >
+      {/* Toggle Button */}
+      <div className="sidebar-toggle">
+        <button onClick={() => setCollapsed(!collapsed)} className="toggle-btn">
           {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         </button>
       </div>
@@ -96,19 +82,8 @@ const Sidebar: React.FC = () => {
         selectedKeys={[location.pathname]}
         items={menuItems}
         onClick={handleMenuClick}
-        className="border-none mt-2"
-        inlineCollapsed={collapsed}
+        className="sidebar-menu"
       />
-
-      {/* Footer */}
-      {!collapsed && (
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-gray-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-gray-500 mb-1">Versiya 1.0.0</p>
-            <p className="text-xs text-gray-400">© 2024 iTech Academy</p>
-          </div>
-        </div>
-      )}
     </Sider>
   );
 };
