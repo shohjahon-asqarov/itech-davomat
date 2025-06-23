@@ -29,9 +29,9 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <AntHeader className="bg-white shadow-sm px-6 flex items-center justify-between">
+    <AntHeader className="bg-white border-b border-gray-200 px-6 flex items-center justify-between h-16">
       <div>
-        <Text className="text-gray-600">
+        <Text className="text-gray-600 font-medium">
           Xush kelibsiz, iTech Academy boshqaruv paneliga
         </Text>
       </div>
@@ -40,9 +40,9 @@ const Header: React.FC = () => {
         <BellOutlined className="text-xl text-gray-600 cursor-pointer hover:text-blue-500 transition-colors" />
         
         <Dropdown menu={{ items: menuItems }} placement="bottomRight">
-          <Space className="cursor-pointer">
-            <Avatar icon={<UserOutlined />} />
-            <Text>Admin</Text>
+          <Space className="cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors">
+            <Avatar icon={<UserOutlined />} size="small" />
+            <Text className="font-medium">Admin</Text>
           </Space>
         </Dropdown>
       </Space>

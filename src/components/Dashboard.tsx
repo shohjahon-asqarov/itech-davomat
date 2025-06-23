@@ -164,8 +164,8 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center space-x-3">
           <Avatar
             style={{
-              backgroundColor: record.attendance_rate >= 90 ? '#52c41a' :
-                record.attendance_rate >= 80 ? '#faad14' : '#ff4d4f'
+              backgroundColor: record.attendance_rate >= 90 ? '#10b981' :
+                record.attendance_rate >= 80 ? '#f59e0b' : '#ef4444'
             }}
           >
             {text.charAt(0).toUpperCase()}
@@ -213,7 +213,7 @@ const Dashboard: React.FC = () => {
       render: (count: number) => (
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-1">
-            <TeamOutlined className="text-purple-500" />
+            <TeamOutlined className="text-blue-500" />
             <span className="font-bold text-lg">{count}</span>
           </div>
           <div className="text-xs text-gray-500">o'quvchi</div>
@@ -234,9 +234,9 @@ const Dashboard: React.FC = () => {
             percent={rate}
             size="small"
             strokeColor={
-              rate >= 90 ? '#52c41a' :
-                rate >= 80 ? '#faad14' :
-                  rate >= 70 ? '#fa8c16' : '#ff4d4f'
+              rate >= 90 ? '#10b981' :
+                rate >= 80 ? '#f59e0b' :
+                  rate >= 70 ? '#f97316' : '#ef4444'
             }
             showInfo={false}
           />
@@ -272,7 +272,6 @@ const Dashboard: React.FC = () => {
               type="primary"
               icon={<EyeOutlined />}
               onClick={() => handleNavigate(record)}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 border-none"
             >
               Ko'rish
             </Button>
@@ -283,25 +282,24 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 space-y-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-      {/* Enhanced Header */}
+    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+      {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               iTech Academy Dashboard
             </h1>
-            <p className="text-gray-600 text-lg">Zamonaviy davomat boshqaruv tizimi</p>
+            <p className="text-gray-600">Zamonaviy davomat boshqaruv tizimi</p>
           </div>
           <div className="flex space-x-3">
-            <Button icon={<DownloadOutlined />} className="border-blue-300 text-blue-600">
+            <Button icon={<DownloadOutlined />}>
               Eksport
             </Button>
             <Button
               type="primary"
               icon={<ReloadOutlined />}
               onClick={() => window.location.reload()}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 border-none"
             >
               Yangilash
             </Button>
@@ -309,73 +307,73 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Enhanced Statistics Cards */}
-      <Row gutter={[24, 24]}>
+      {/* Statistics Cards */}
+      <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={8} xl={4}>
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-blue-50 to-blue-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-blue-600 font-semibold">Jami Guruhlar</span>}
+              title="Jami Guruhlar"
               value={stats.totalGroups}
               prefix={<TeamOutlined className="text-blue-500" />}
-              valueStyle={{ color: '#1890ff', fontSize: '28px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#3b82f6' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} xl={4}>
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-green-50 to-green-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-green-600 font-semibold">Faol Guruhlar</span>}
+              title="Faol Guruhlar"
               value={stats.activeGroups}
               prefix={<CheckCircleOutlined className="text-green-500" />}
-              valueStyle={{ color: '#52c41a', fontSize: '28px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#10b981' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} xl={4}>
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-purple-50 to-purple-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-purple-600 font-semibold">Jami O'quvchilar</span>}
+              title="Jami O'quvchilar"
               value={stats.totalStudents}
               prefix={<UserOutlined className="text-purple-500" />}
-              valueStyle={{ color: '#722ed1', fontSize: '28px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#8b5cf6' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} xl={4}>
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-orange-50 to-orange-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-orange-600 font-semibold">O'rtacha Davomat</span>}
+              title="O'rtacha Davomat"
               value={stats.avgAttendance}
               suffix="%"
               prefix={<FireOutlined className="text-orange-500" />}
-              valueStyle={{ color: '#fa8c16', fontSize: '28px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#f59e0b' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} xl={4}>
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-yellow-50 to-yellow-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-yellow-600 font-semibold">Top Guruhlar</span>}
+              title="Top Guruhlar"
               value={stats.topPerformingGroups}
               prefix={<TrophyOutlined className="text-yellow-500" />}
-              valueStyle={{ color: '#faad14', fontSize: '28px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#eab308' }}
             />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} xl={4}>
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-pink-50 to-pink-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-pink-600 font-semibold">Mentorlar</span>}
+              title="Mentorlar"
               value={stats.mentors}
               prefix={<StarOutlined className="text-pink-500" />}
-              valueStyle={{ color: '#eb2f96', fontSize: '28px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#ec4899' }}
             />
           </Card>
         </Col>
       </Row>
 
-      {/* Enhanced Filters and Search */}
-      <Card className="shadow-lg border-0">
+      {/* Filters and Search */}
+      <Card>
         <div className="flex flex-wrap items-center gap-4 mb-4">
           <Search
             placeholder="Guruh yoki mentor nomi bo'yicha qidirish..."
@@ -426,27 +424,24 @@ const Dashboard: React.FC = () => {
         </div>
       </Card>
 
-      {/* Enhanced Groups Table */}
+      {/* Groups Table */}
       <Card
         title={
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <TeamOutlined className="text-white text-xl" />
-              </div>
+              <TeamOutlined className="text-xl text-blue-500" />
               <div>
-                <h2 className="text-2xl font-bold text-gray-800 m-0">Guruhlar Ro'yxati</h2>
-                <p className="text-gray-500 m-0">{filteredData.length} ta guruh topildi</p>
+                <h2 className="text-xl font-semibold text-gray-800 m-0">Guruhlar Ro'yxati</h2>
+                <p className="text-gray-500 m-0 text-sm">{filteredData.length} ta guruh topildi</p>
               </div>
             </div>
             <Badge count={stats.topPerformingGroups} showZero>
-              <Button icon={<FilterOutlined />} className="border-blue-300 text-blue-600">
+              <Button icon={<FilterOutlined />}>
                 Filtrlar
               </Button>
             </Badge>
           </div>
         }
-        className="shadow-lg border-0"
       >
         <Table
           columns={columns}
@@ -465,12 +460,11 @@ const Dashboard: React.FC = () => {
         />
       </Card>
 
-      {/* Quick Stats Timeline */}
-      <Row gutter={[24, 24]}>
+      {/* Quick Stats */}
+      <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
           <Card
             title="So'nggi Faoliyat"
-            className="shadow-lg border-0"
             extra={<Button type="link">Barchasini ko'rish</Button>}
           >
             <Timeline
@@ -479,7 +473,7 @@ const Dashboard: React.FC = () => {
                   item.attendance_rate >= 80 ? 'blue' : 'orange',
                 children: (
                   <div>
-                    <div className="font-semibold">{item.guruh_nomi}</div>
+                    <div className="font-medium">{item.guruh_nomi}</div>
                     <div className="text-sm text-gray-500">
                       {item.mentor} • {item.attendance_rate}% davomat
                     </div>
@@ -493,26 +487,25 @@ const Dashboard: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card
             title="Top Guruhlar"
-            className="shadow-lg border-0"
             extra={<TrophyOutlined className="text-yellow-500" />}
           >
-            <div className="space-y-4">
+            <div className="space-y-3">
               {filteredData
                 .filter(item => item.attendance_rate >= 85)
                 .slice(0, 5)
                 .map((item, index) => (
-                  <div key={item.key} className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
+                  <div key={item.key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                         {index + 1}
                       </div>
                       <div>
-                        <div className="font-semibold">{item.guruh_nomi}</div>
+                        <div className="font-medium">{item.guruh_nomi}</div>
                         <div className="text-sm text-gray-600">{item.mentor}</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-lg text-orange-600">{item.attendance_rate}%</div>
+                      <div className="font-bold text-lg text-blue-600">{item.attendance_rate}%</div>
                       <div className="text-xs text-gray-500">{item.oquvchilar_soni} o'quvchi</div>
                     </div>
                   </div>

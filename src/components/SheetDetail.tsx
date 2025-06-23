@@ -131,7 +131,6 @@ const SheetDetail: React.FC = () => {
           description={error}
           type="error"
           showIcon
-          className="shadow-lg"
         />
       </div>
     );
@@ -156,7 +155,7 @@ const SheetDetail: React.FC = () => {
       if (index === 0) {
         return (
           <div className="flex items-center space-x-2">
-            <Avatar size="small" style={{ backgroundColor: '#1890ff' }}>
+            <Avatar size="small" style={{ backgroundColor: '#3b82f6' }}>
               {rowIndex + 1}
             </Avatar>
             <span className="font-medium">{value}</span>
@@ -167,13 +166,13 @@ const SheetDetail: React.FC = () => {
       if (value === 'Keldi') {
         return (
           <Tooltip title="Darsga kelgan">
-            <CheckCircleOutlined className="text-3xl text-green-500 hover:scale-110 transition-transform" />
+            <CheckCircleOutlined className="text-2xl text-green-500" />
           </Tooltip>
         );
       } else if (value === 'Kelmadi') {
         return (
           <Tooltip title="Darsga kelmagan">
-            <CloseCircleOutlined className="text-3xl text-red-500 hover:scale-110 transition-transform" />
+            <CloseCircleOutlined className="text-2xl text-red-500" />
           </Tooltip>
         );
       }
@@ -190,23 +189,22 @@ const SheetDetail: React.FC = () => {
   });
 
   return (
-    <div className="p-6 space-y-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-      {/* Enhanced Header */}
+    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
           <Button
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate('/')}
             size="large"
-            className="shadow-md hover:shadow-lg transition-shadow"
           >
             Orqaga
           </Button>
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-bold text-gray-900">
               {dataInfo?.guruh_nomi}
             </h1>
-            <p className="text-gray-600 text-lg">Batafsil davomat ma'lumotlari</p>
+            <p className="text-gray-600">Batafsil davomat ma'lumotlari</p>
           </div>
         </div>
 
@@ -217,16 +215,15 @@ const SheetDetail: React.FC = () => {
             onClick={sendAttendanceUpdate}
             loading={sending}
             size="large"
-            className="bg-gradient-to-r from-blue-500 to-purple-600 border-none shadow-lg hover:shadow-xl transition-all"
           >
             Telegramga yuborish
           </Button>
         </Space>
       </div>
 
-      {/* Enhanced Group Info Card */}
-      <Card className="shadow-xl border-0 bg-gradient-to-r from-white to-blue-50">
-        <Row gutter={[24, 24]}>
+      {/* Group Info Card */}
+      <Card>
+        <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={6}>
             <GroupInfoCard
               icon={<UserOutlined className="text-white text-xl" />}
@@ -241,8 +238,8 @@ const SheetDetail: React.FC = () => {
               icon={<CalendarOutlined className="text-white text-xl" />}
               title="Dars kunlari"
               value={dataInfo?.dars_kunlari}
-              gradientFrom="#22c55e"
-              gradientTo="#16a34a"
+              gradientFrom="#10b981"
+              gradientTo="#059669"
             />
           </Col>
           <Col xs={24} sm={12} md={6}>
@@ -250,8 +247,8 @@ const SheetDetail: React.FC = () => {
               icon={<ClockCircleOutlined className="text-white text-xl" />}
               title="Dars vaqti"
               value={`${dataInfo?.dars_boshlanish_vaqti} - ${dataInfo?.dars_tugash_vaqti}`}
-              gradientFrom="#f59e42"
-              gradientTo="#ea580c"
+              gradientFrom="#f59e0b"
+              gradientTo="#d97706"
             />
           </Col>
           <Col xs={24} sm={12} md={6}>
@@ -259,68 +256,68 @@ const SheetDetail: React.FC = () => {
               icon={<TeamOutlined className="text-white text-xl" />}
               title="O'quvchilar"
               value={attendanceData.length}
-              gradientFrom="#a21caf"
+              gradientFrom="#8b5cf6"
               gradientTo="#7c3aed"
             />
           </Col>
         </Row>
       </Card>
 
-      {/* Enhanced Statistics */}
-      <Row gutter={[24, 24]}>
+      {/* Statistics */}
+      <Row gutter={[16, 16]}>
         <Col xs={24} sm={8}>
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-green-50 to-green-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-green-600 font-semibold text-lg">Kelganlar</span>}
+              title="Kelganlar"
               value={presentCount}
               prefix={<CheckCircleOutlined className="text-green-500" />}
-              valueStyle={{ color: '#52c41a', fontSize: '32px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#10b981' }}
             />
             <Progress
               percent={Math.round((presentCount / attendanceData.length) * 100)}
-              strokeColor="#52c41a"
+              strokeColor="#10b981"
               showInfo={false}
               className="mt-2"
             />
           </Card>
         </Col>
         <Col xs={24} sm={8}>
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-red-50 to-red-100">
+          <Card className="text-center">
             <Statistic
-              title={<span className="text-red-600 font-semibold text-lg">Kelmaganlar</span>}
+              title="Kelmaganlar"
               value={absentCount}
               prefix={<CloseCircleOutlined className="text-red-500" />}
-              valueStyle={{ color: '#ff4d4f', fontSize: '32px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#ef4444' }}
             />
             <Progress
               percent={Math.round((absentCount / attendanceData.length) * 100)}
-              strokeColor="#ff4d4f"
+              strokeColor="#ef4444"
               showInfo={false}
               className="mt-2"
             />
           </Card>
         </Col>
         <Col xs={24} sm={8}>
-          <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-blue-100">
+          <Card className="text-center">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-blue-600 font-semibold text-lg">Davomat foizi</span>
-              {attendanceRate >= 90 && <TrophyOutlined className="text-yellow-500 text-xl" />}
-              {attendanceRate >= 80 && attendanceRate < 90 && <StarOutlined className="text-blue-500 text-xl" />}
-              {attendanceRate < 70 && <WarningOutlined className="text-red-500 text-xl" />}
+              <span className="text-sm font-medium text-gray-500">Davomat foizi</span>
+              {attendanceRate >= 90 && <TrophyOutlined className="text-yellow-500" />}
+              {attendanceRate >= 80 && attendanceRate < 90 && <StarOutlined className="text-blue-500" />}
+              {attendanceRate < 70 && <WarningOutlined className="text-red-500" />}
             </div>
-            <div className="text-4xl font-bold mb-2" style={{
-              color: attendanceRate >= 90 ? '#52c41a' :
-                attendanceRate >= 80 ? '#1890ff' :
-                  attendanceRate >= 70 ? '#faad14' : '#ff4d4f'
+            <div className="text-3xl font-bold mb-2" style={{
+              color: attendanceRate >= 90 ? '#10b981' :
+                attendanceRate >= 80 ? '#3b82f6' :
+                  attendanceRate >= 70 ? '#f59e0b' : '#ef4444'
             }}>
               {attendanceRate}%
             </div>
             <Progress
               percent={attendanceRate}
               strokeColor={
-                attendanceRate >= 90 ? '#52c41a' :
-                  attendanceRate >= 80 ? '#1890ff' :
-                    attendanceRate >= 70 ? '#faad14' : '#ff4d4f'
+                attendanceRate >= 90 ? '#10b981' :
+                  attendanceRate >= 80 ? '#3b82f6' :
+                    attendanceRate >= 70 ? '#f59e0b' : '#ef4444'
               }
               showInfo={false}
             />
@@ -333,16 +330,14 @@ const SheetDetail: React.FC = () => {
         </Col>
       </Row>
 
-      {/* Enhanced Attendance Table */}
+      {/* Attendance Table */}
       <Card
         title={
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <CalendarOutlined className="text-white" />
-              </div>
+              <CalendarOutlined className="text-xl text-blue-500" />
               <div>
-                <span className="text-xl font-bold text-gray-800">
+                <span className="text-lg font-semibold text-gray-800">
                   Davomat jadvali
                 </span>
                 <div className="text-sm text-gray-500">
@@ -353,24 +348,22 @@ const SheetDetail: React.FC = () => {
             <Space>
               <Badge
                 count={presentCount}
-                style={{ backgroundColor: '#52c41a' }}
+                style={{ backgroundColor: '#10b981' }}
                 title="Kelganlar soni"
               />
               <Badge
                 count={absentCount}
-                style={{ backgroundColor: '#ff4d4f' }}
+                style={{ backgroundColor: '#ef4444' }}
                 title="Kelmaganlar soni"
               />
               <Tag
                 color={attendanceRate >= 80 ? 'green' : attendanceRate >= 70 ? 'orange' : 'red'}
-                className="text-lg px-3 py-1"
               >
                 {attendanceRate}% davomat
               </Tag>
             </Space>
           </div>
         }
-        className="shadow-xl border-0"
       >
         <Table
           columns={columns}
@@ -381,30 +374,29 @@ const SheetDetail: React.FC = () => {
           className="custom-attendance-table"
           rowClassName={(record, index) => {
             const status = record[`col_${header.indexOf(getLatestDate())}`];
-            return status === 'Keldi' ? 'bg-green-50 hover:bg-green-100' :
-              status === 'Kelmadi' ? 'bg-red-50 hover:bg-red-100' : '';
+            return status === 'Keldi' ? 'bg-green-50' :
+              status === 'Kelmadi' ? 'bg-red-50' : '';
           }}
         />
       </Card>
 
       {/* Additional Analytics */}
-      <Row gutter={[24, 24]}>
+      <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
           <Card
             title="Davomat Tahlili"
-            className="shadow-lg border-0"
             extra={<FireOutlined className="text-orange-500" />}
           >
-            <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <span className="font-medium">Eng yaxshi ko'rsatkich</span>
                 <span className="font-bold text-green-600">{attendanceRate >= 90 ? 'A\'lo' : attendanceRate >= 80 ? 'Yaxshi' : 'Yaxshilanishi kerak'}</span>
               </div>
-              <div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <span className="font-medium">Jami darslar</span>
                 <span className="font-bold text-blue-600">{header.filter(h => /\d{2}\.\d{2}\.\d{4}/.test(h)).length}</span>
               </div>
-              <div className="flex justify-between items-center p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <span className="font-medium">Faol o'quvchilar</span>
                 <span className="font-bold text-purple-600">{presentCount}/{attendanceData.length}</span>
               </div>
@@ -415,7 +407,6 @@ const SheetDetail: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card
             title="Tavsiyalar"
-            className="shadow-lg border-0"
             extra={<StarOutlined className="text-yellow-500" />}
           >
             <Timeline
