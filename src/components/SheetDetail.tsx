@@ -35,12 +35,6 @@ import useGoogleSheet from '../hook/useGoogleSheet';
 import { sendTelegramMessage } from '../services/telegramService';
 import GroupInfoCard from './GroupInfoCard';
 
-// Define AttendanceRow type
-interface AttendanceRow {
-  fio: string;
-  status: string;
-}
-
 const SheetDetail: React.FC = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -50,28 +44,99 @@ const SheetDetail: React.FC = () => {
 
   const { header, body, loading, error } = useGoogleSheet(id as string);
 
-  const getLatestDate = () => {
-    const dates: string[] = [];
-    header.forEach((row: string) => {
-      if (typeof row === 'string' && /\d{2}\.\d{2}\.\d{4}/.test(row)) {
-        dates.push(row);
+  // --- Yangi format uchun yordamchi funksiyalar ---
+  // header: 1-qatordagi sarlavhalar, body: barcha qatorlar (shu jumladan 2-qatordagi sub-headerlar va o'quvchilar)
+
+  // 1-qatordagi sarlavhalar (header)
+  // 2-qatordagi sub-headerlar (body[0])
+  // 3-qatordan boshlab o'quvchilar (body.slice(1))
+
+  // Sana ustunlari uchun indexlarni topamiz
+  const dateColumnIndexes: number[] = [];
+  if (header && header.length > 0) {
+    header.forEach((item: string, idx: number) => {
+      if (/\d{2}\/\d{2}\/\d{4}/.test(item)) {
+        dateColumnIndexes.push(idx);
       }
     });
-    return dates.at(-1);
+  }
+
+  // Jadval ustunlarini yasash
+  const columns = [
+    { title: 'T/R', dataIndex: 'tr', key: 'tr', align: 'center' as const },
+    { title: 'ID', dataIndex: 'id', key: 'id', align: 'center' as const },
+    { title: 'F.I.O', dataIndex: 'fio', key: 'fio', align: 'center' as const },
+    { title: "Umumiy davomat (%)", dataIndex: 'davomat', key: 'davomat', align: 'center' as const },
+    { title: "Umumiy o'zlashtirish (%)", dataIndex: 'ozlashtirish', key: 'ozlashtirish', align: 'center' as const },
+    ...dateColumnIndexes.map((dateIdx) => ({
+      title: (
+        <div className="text-center font-semibold">
+          {header[dateIdx]}
+        </div>
+      ),
+      dataIndex: `davomat_${dateIdx}`,
+      key: `davomat_${dateIdx}`,
+      align: 'center' as const,
+      render: (value: any) => {
+        if (value === '100%') {
+          return (
+            <Tooltip title="Darsga kelgan">
+              <CheckCircleOutlined className="text-2xl text-green-500" />
+            </Tooltip>
+          );
+        } else if (value === '0%') {
+          return (
+            <Tooltip title="Darsga kelmagan">
+              <CloseCircleOutlined className="text-2xl text-red-500" />
+            </Tooltip>
+          );
+        }
+        return <span className="font-medium">{value}</span>;
+      }
+    }))
+  ];
+
+  // DataSource yasash
+  const dataSource = body && body.length > 1 ? body.slice(1).map((row: string[], idx: number) => {
+    const data: any = {
+      key: idx,
+      tr: row[0],
+      id: row[1],
+      fio: row[2],
+      davomat: row[3],
+      ozlashtirish: row[4],
+    };
+    dateColumnIndexes.forEach((dateIdx) => {
+      data[`davomat_${dateIdx}`] = row[dateIdx];
+    });
+    return data;
+  }) : [];
+
+  // Eng so'nggi sananing indexini topamiz
+  const lastDateIdx = dateColumnIndexes.length > 0 ? dateColumnIndexes[dateColumnIndexes.length - 1] : -1;
+
+  // Har bir o'quvchi uchun eng so'nggi sananing "Davomat (%)" ustunini tekshiramiz
+  const presentCount = lastDateIdx !== -1 ? dataSource.filter(row => row[`davomat_${lastDateIdx}`] === '100%').length : 0;
+  const absentCount = lastDateIdx !== -1 ? dataSource.filter(row => row[`davomat_${lastDateIdx}`] === '0%').length : 0;
+  const attendanceRate = dataSource.length > 0 ? Math.round((presentCount / dataSource.length) * 100) : 0;
+
+  // Telegramga yuborish uchun eng so'nggi sananing davomatini chiqarish
+  const extractLatestAttendance = () => {
+    if (lastDateIdx === -1) return [];
+    return dataSource.map((row: any) => ({
+      fio: row.fio,
+      status: row[`davomat_${lastDateIdx}`],
+    }));
   };
 
-  const extractDataByDate = (): AttendanceRow[] => {
-    const dateIndex = header.indexOf(getLatestDate() ?? '');
-    if (dateIndex === -1) return [];
-    return body.map((row) => ({
-      fio: row[1],
-      status: row[dateIndex],
-    }));
+  const getLatestDate = () => {
+    if (lastDateIdx === -1) return '';
+    return header[lastDateIdx];
   };
 
   const sendAttendanceUpdate = async () => {
     setSending(true);
-    const attendanceData = extractDataByDate();
+    const attendanceData = extractLatestAttendance();
     let message = `📅 Davomat: ${getLatestDate()}:\n\n`;
 
     message += `Assalomu alekum hurmatli ota-onalar! Bugungi guruhimiz o'quvchilaring davomati bilan tanishib chiqishingizni iltimos qilib qolar edik!\n\n`;
@@ -80,8 +145,8 @@ const SheetDetail: React.FC = () => {
     message += `🕧 Dars tugash vaqti: ${dataInfo.dars_tugash_vaqti}\n`;
     message += `👨‍🏫 Mentor: ${dataInfo.mentor}\n\n`;
 
-    attendanceData.forEach((entry, index) => {
-      message += `${index + 1}. ${entry.fio} ${entry.status === 'Keldi' ? '✅' : '❌'}\n`;
+    attendanceData.forEach((entry: any, index: number) => {
+      message += `${index + 1}. ${entry.fio} ${entry.status === '100%' ? '✅' : entry.status === '0%' ? '❌' : entry.status}\n`;
     });
 
     try {
@@ -91,7 +156,7 @@ const SheetDetail: React.FC = () => {
     }
   };
 
-  // Auto-send functionality
+  // Auto-send functionality (o'zgarmadi)
   useEffect(() => {
     const shouldRunOnDay = (dayType: string) => {
       const today = new Date();
@@ -110,7 +175,38 @@ const SheetDetail: React.FC = () => {
     }, 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [dataInfo, sendAttendanceUpdate]);
+  }, [dataInfo]);
+
+  // O'rtacha o'zlashtirish va o'rtacha davomatni hisoblash
+  // Faqat darslar ustunlari bo'yicha (dateColumnIndexes)
+  let totalAttendance = 0;
+  let totalAttendanceCount = 0;
+  let totalMastery = 0;
+  let totalMasteryCount = 0;
+
+  if (body && body.length > 1) {
+    body.slice(1).forEach((row: string[]) => {
+      dateColumnIndexes.forEach((dateIdx) => {
+        // Davomat (%)
+        const att = row[dateIdx];
+        if (att && att.endsWith('%')) {
+          totalAttendance += parseInt(att);
+          totalAttendanceCount++;
+        }
+        // O'zlashtirish (%) - har bir sana uchun Davomatdan keyingi ustun
+        const masteryIdx = dateIdx + 1;
+        const mastery = row[masteryIdx];
+        if (mastery && mastery.endsWith('%')) {
+          totalMastery += parseInt(mastery);
+          totalMasteryCount++;
+        }
+      });
+    });
+  }
+
+  const avgAttendance = totalAttendanceCount > 0 ? Math.round(totalAttendance / totalAttendanceCount) : 0;
+  const avgMastery = totalMasteryCount > 0 ? Math.round(totalMastery / totalMasteryCount) : 0;
+  const totalLessons = dateColumnIndexes.length;
 
   if (loading) {
     return (
@@ -135,58 +231,6 @@ const SheetDetail: React.FC = () => {
       </div>
     );
   }
-
-  const attendanceData = extractDataByDate();
-  const presentCount = attendanceData.filter(item => item.status === 'Keldi').length;
-  const absentCount = attendanceData.filter(item => item.status === 'Kelmadi').length;
-  const attendanceRate = attendanceData.length > 0 ? Math.round((presentCount / attendanceData.length) * 100) : 0;
-
-  // Enhanced columns with better styling
-  const columns = header.map((headerItem, index) => ({
-    title: (
-      <div className="text-center font-semibold">
-        {headerItem}
-      </div>
-    ),
-    dataIndex: `col_${index}`,
-    key: `col_${index}`,
-    align: 'center' as const,
-    render: (value: any, _record: any, rowIndex: number) => {
-      if (index === 0) {
-        return (
-          <div className="flex items-center space-x-2">
-            <Avatar size="small" style={{ backgroundColor: '#3b82f6' }}>
-              {rowIndex + 1}
-            </Avatar>
-            <span className="font-medium">{value}</span>
-          </div>
-        );
-      }
-
-      if (value === 'Keldi') {
-        return (
-          <Tooltip title="Darsga kelgan">
-            <CheckCircleOutlined className="text-2xl text-green-500" />
-          </Tooltip>
-        );
-      } else if (value === 'Kelmadi') {
-        return (
-          <Tooltip title="Darsga kelmagan">
-            <CloseCircleOutlined className="text-2xl text-red-500" />
-          </Tooltip>
-        );
-      }
-      return <span className="font-medium">{value}</span>;
-    },
-  }));
-
-  const dataSource = body.map((row, index) => {
-    const rowData: any = { key: index };
-    row.forEach((cell, cellIndex) => {
-      rowData[`col_${cellIndex}`] = cell;
-    });
-    return rowData;
-  });
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
@@ -255,7 +299,7 @@ const SheetDetail: React.FC = () => {
             <GroupInfoCard
               icon={<TeamOutlined className="text-white text-xl" />}
               title="O'quvchilar"
-              value={attendanceData.length}
+              value={dataSource.length}
               gradientFrom="#8b5cf6"
               gradientTo="#7c3aed"
             />
@@ -265,7 +309,37 @@ const SheetDetail: React.FC = () => {
 
       {/* Statistics */}
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={6}>
+          <Card className="text-center">
+            <Statistic
+              title="Jami darslar"
+              value={totalLessons}
+              prefix={<CalendarOutlined className="text-blue-500" />}
+              valueStyle={{ color: '#3b82f6' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={6}>
+          <Card className="text-center">
+            <Statistic
+              title="O'rtacha davomat"
+              value={avgAttendance + '%'}
+              prefix={<CheckCircleOutlined className="text-green-500" />}
+              valueStyle={{ color: '#10b981' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={6}>
+          <Card className="text-center">
+            <Statistic
+              title="O'rtacha o'zlashtirish"
+              value={avgMastery + '%'}
+              prefix={<StarOutlined className="text-yellow-500" />}
+              valueStyle={{ color: '#f59e0b' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={6}>
           <Card className="text-center">
             <Statistic
               title="Kelganlar"
@@ -274,14 +348,14 @@ const SheetDetail: React.FC = () => {
               valueStyle={{ color: '#10b981' }}
             />
             <Progress
-              percent={Math.round((presentCount / attendanceData.length) * 100)}
+              percent={dataSource.length > 0 ? Math.round((presentCount / dataSource.length) * 100) : 0}
               strokeColor="#10b981"
               showInfo={false}
               className="mt-2"
             />
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={6}>
           <Card className="text-center">
             <Statistic
               title="Kelmaganlar"
@@ -290,14 +364,14 @@ const SheetDetail: React.FC = () => {
               valueStyle={{ color: '#ef4444' }}
             />
             <Progress
-              percent={Math.round((absentCount / attendanceData.length) * 100)}
+              percent={dataSource.length > 0 ? Math.round((absentCount / dataSource.length) * 100) : 0}
               strokeColor="#ef4444"
               showInfo={false}
               className="mt-2"
             />
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={6}>
           <Card className="text-center">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-500">Davomat foizi</span>
@@ -341,7 +415,7 @@ const SheetDetail: React.FC = () => {
                   Davomat jadvali
                 </span>
                 <div className="text-sm text-gray-500">
-                  {getLatestDate()} - {attendanceData.length} o'quvchi
+                  {getLatestDate()} - {dataSource.length} o'quvchi
                 </div>
               </div>
             </div>
@@ -373,10 +447,10 @@ const SheetDetail: React.FC = () => {
           scroll={{ x: 'max-content' }}
           className="custom-attendance-table"
           rowClassName={(_record, _index) => {
-            const colKey = `col_${header.indexOf(getLatestDate() ?? '')}`;
-            const status = _record[colKey] ?? '';
-            return status === 'Keldi' ? 'bg-green-50' :
-              status === 'Kelmadi' ? 'bg-red-50' : '';
+            if (lastDateIdx === -1) return '';
+            const status = _record[`davomat_${lastDateIdx}`] ?? '';
+            return status === '100%' ? 'bg-green-50' :
+              status === '0%' ? 'bg-red-50' : '';
           }}
         />
       </Card>
@@ -395,11 +469,11 @@ const SheetDetail: React.FC = () => {
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <span className="font-medium">Jami darslar</span>
-                <span className="font-bold text-blue-600">{header.filter(h => /\d{2}\.\d{2}\.\d{4}/.test(h)).length}</span>
+                <span className="font-bold text-blue-600">{dateColumnIndexes.length}</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <span className="font-medium">Faol o'quvchilar</span>
-                <span className="font-bold text-purple-600">{presentCount}/{attendanceData.length}</span>
+                <span className="font-bold text-purple-600">{presentCount}/{dataSource.length}</span>
               </div>
             </div>
           </Card>
