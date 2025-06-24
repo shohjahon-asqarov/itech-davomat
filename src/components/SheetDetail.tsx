@@ -34,7 +34,8 @@ import {
   StarOutlined,
   DownloadOutlined,
   SearchOutlined,
-  BarChartOutlined
+  BarChartOutlined,
+  CommentOutlined
 } from '@ant-design/icons';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import useGoogleSheet from '../hook/useGoogleSheet';
@@ -420,95 +421,102 @@ const SheetDetail: React.FC = () => {
             <Statistic
               title={`Tanlangan sana: ${filteredDate || '—'}`}
               value={attendanceRateFiltered + '%'}
-              prefix={<BarChartOutlined className="text-blue-500" />}
-              valueStyle={{ color: '#3b82f6' }}
+              prefix={<BarChartOutlined className="text-purple-500" />}
+              valueStyle={{ color: '#8b5cf6' }}
             />
-            <Progress percent={attendanceRateFiltered} strokeColor="#3b82f6" showInfo={false} className="mt-2" />
+            <Progress percent={attendanceRateFiltered} strokeColor="#8b5cf6" showInfo={false} className="mt-2" />
           </Card>
         </Col>
       </Row>
 
-      {/* Haftalik davomat statistikasi */}
-      <Card className="mb-4" title="Dars kunlari va davomat" extra={<BarChartOutlined className="text-blue-500" />}>
-        <div className="flex flex-wrap gap-4">
+      {/* Haftalik davomat statistikasi (Bar Chart) */}
+      <Card title="Dars kunlari bo'yicha davomat" extra={<BarChartOutlined className="text-blue-500" />}>
+        <div className="flex items-end space-x-2 p-2 overflow-x-auto" style={{ height: '180px' }}>
           {lessonDays.map(lday => (
-            <div key={lday.date} className="flex flex-col items-center w-40 p-2 border rounded bg-white">
-              <span className="font-medium text-gray-700">{lday.date}</span>
-              <span className="text-xs text-gray-500 mb-1">{lday.weekDay}</span>
-              <Progress percent={lday.percent} strokeColor="#3b82f6" showInfo={true} />
+            <div key={lday.date} className="flex flex-col items-center flex-shrink-0 group" style={{ width: '70px' }}>
+              <Tooltip title={`Davomat: ${lday.percent}%`}>
+                <div className="w-10 bg-gray-200 rounded-t-lg flex items-end relative" style={{ height: '120px' }}>
+                  <div className="bg-blue-500 w-full rounded-t-lg group-hover:bg-blue-600 transition-colors" style={{ height: `${lday.percent}%` }}>
+                    <span className="text-white text-xs absolute -top-5 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity font-bold">{lday.percent}%</span>
+                  </div>
+                </div>
+              </Tooltip>
+              <span className="text-xs font-medium text-gray-700 mt-2 text-center w-full truncate">{lday.date}</span>
+              <span className="text-xs text-gray-500">{lday.weekDay}</span>
             </div>
           ))}
         </div>
       </Card>
 
+      {/* Boshqaruv paneli */}
+      <Card>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <Input
+              placeholder="Ism yoki ID bo'yicha qidirish"
+              prefix={<SearchOutlined />}
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              allowClear
+              style={{ width: 220 }}
+            />
+            <Select
+              placeholder="Sana tanlang"
+              style={{ width: 180 }}
+              allowClear
+              value={selectedDateIdx}
+              onChange={v => setSelectedDateIdx(v)}
+              options={dateColumnIndexes.map(idx => ({ label: header[idx], value: idx }))}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={handleDownloadExcel}
+              size="middle"
+            >
+              Excel
+            </Button>
+            <Button
+              type="primary"
+              icon={<SendOutlined />}
+              onClick={sendAttendanceUpdate}
+              loading={sending}
+              size="middle"
+            >
+              Telegramga yuborish
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+
       {/* Attendance Table */}
       <Card
         title={
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <CalendarOutlined className="text-xl text-blue-500" />
-                <div>
-                  <span className="text-lg font-semibold text-gray-800">
-                    Davomat jadvali
-                  </span>
-                  <div className="text-sm text-gray-500">
-                    {filteredDate} - {filteredDataSource.length} o'quvchi
-                  </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <CalendarOutlined className="text-xl text-blue-500" />
+              <div>
+                <span className="text-lg font-semibold text-gray-800">
+                  Davomat jadvali ({filteredDate})
+                </span>
+                <div className="text-sm text-gray-500">
+                  Jami {filteredDataSource.length} o'quvchi
                 </div>
               </div>
-              <Space>
-                <Badge
-                  count={presentCountFiltered}
-                  style={{ backgroundColor: '#10b981' }}
-                  title="Kelganlar soni"
-                />
-                <Badge
-                  count={absentCountFiltered}
-                  style={{ backgroundColor: '#ef4444' }}
-                  title="Kelmaganlar soni"
-                />
-                <Tag
-                  color={attendanceRateFiltered >= 80 ? 'green' : attendanceRateFiltered >= 70 ? 'orange' : 'red'}
-                >
-                  {attendanceRateFiltered}% davomat
-                </Tag>
-              </Space>
             </div>
-            <div className="flex flex-wrap gap-2 items-center mt-2">
-              <Input
-                placeholder="Ism yoki ID bo'yicha qidirish"
-                prefix={<SearchOutlined />}
-                value={searchText}
-                onChange={e => setSearchText(e.target.value)}
-                allowClear
-                style={{ width: 220 }}
-              />
-              <Select
-                placeholder="Sana tanlang"
-                style={{ width: 180 }}
-                allowClear
-                value={selectedDateIdx}
-                onChange={v => setSelectedDateIdx(v)}
-                options={dateColumnIndexes.map(idx => ({ label: header[idx], value: idx }))}
-              />
-              <Button
-                icon={<DownloadOutlined />}
-                onClick={handleDownloadExcel}
-                size="middle"
-              >
-                Excel
-              </Button>
-              <Button
-                type="primary"
-                icon={<SendOutlined />}
-                onClick={sendAttendanceUpdate}
-                loading={sending}
-                size="middle"
-              >
-                Telegramga yuborish
-              </Button>
-            </div>
+            <Space>
+              <Tooltip title="Kelganlar soni">
+                <Badge count={presentCountFiltered} style={{ backgroundColor: '#10b981' }} />
+              </Tooltip>
+              <Tooltip title="Kelmaganlar soni">
+                <Badge count={absentCountFiltered} style={{ backgroundColor: '#ef4444' }} />
+              </Tooltip>
+              <Tag color={attendanceRateFiltered >= 80 ? 'green' : attendanceRateFiltered >= 70 ? 'orange' : 'red'}>
+                {attendanceRateFiltered}%
+              </Tag>
+            </Space>
           </div>
         }
       >
@@ -520,10 +528,13 @@ const SheetDetail: React.FC = () => {
           scroll={{ x: 'max-content' }}
           className="custom-attendance-table"
           rowClassName={(_record, _index) => {
-            if (filteredDateIdx === -1) return '';
+            if (filteredDateIdx === -1) return 'cursor-pointer';
             const status = _record[`davomat_${filteredDateIdx}`] ?? '';
-            return status === '100%' ? 'bg-green-50' :
-              status === '0%' ? 'bg-red-50' : '';
+            let classes = 'cursor-pointer transition-colors';
+            if (status === '100%') classes += ' hover:bg-green-100 bg-green-50';
+            else if (status === '0%') classes += ' hover:bg-red-100 bg-red-50';
+            else classes += ' hover:bg-gray-50';
+            return classes;
           }}
           onRow={record => ({
             onClick: () => handleRowClick(record)
@@ -531,55 +542,71 @@ const SheetDetail: React.FC = () => {
         />
       </Card>
 
-      {/* O'quvchi tafsilotlari modal */}
+      {/* O'quvchi tafsilotlari modal (Qayta ishlangan) */}
       <Modal
         open={modalVisible}
-        title={selectedStudent ? selectedStudent.fio : ''}
         onCancel={() => setModalVisible(false)}
         footer={null}
-        width={600}
+        width={700}
+        title={
+          <div className="flex items-center gap-4">
+            <Avatar size="large" icon={<UserOutlined />} className="bg-blue-500" />
+            <div>
+              <h2 className="text-xl font-bold text-gray-800">{selectedStudent?.fio}</h2>
+              <span className="text-sm text-gray-500">ID: {selectedStudent?.id}</span>
+            </div>
+          </div>
+        }
       >
         {selectedStudent && (
-          <div className="space-y-2">
-            <div><b>ID:</b> {selectedStudent.id}</div>
-            <div><b>Umumiy davomat:</b> {selectedStudent.davomat}</div>
-            <div><b>Umumiy o'zlashtirish:</b> {selectedStudent.ozlashtirish}</div>
-            <div className="mt-4">
-              <b>Barcha darslar bo'yicha:</b>
-              <Table
-                size="small"
-                columns={[
-                  ...dateColumnIndexes.map(idx => ({
-                    title: header[idx],
-                    dataIndex: `davomat_${idx}`,
-                    key: `davomat_${idx}`,
-                    render: (value: any, _record: any, _index: number) => {
-                      if (value === '100%') return <CheckCircleOutlined className="text-green-500" />;
-                      if (value === '0%') return <CloseCircleOutlined className="text-red-500" />;
-                      return value;
-                    }
-                  })),
-                  {
-                    title: "O'zlashtirish",
-                    dataIndex: 'mastery',
-                    key: 'mastery',
-                    render: (value: any, record: any, _index: number) => record.mastery
-                  },
-                  {
-                    title: 'Izoh',
-                    dataIndex: 'izoh',
-                    key: 'izoh',
-                    render: (value: any, record: any, _index: number) => record.izoh
+          <div className="pt-4">
+            <Row gutter={[32, 16]} className="mb-6">
+              <Col xs={24} sm={12}>
+                <Statistic title="Umumiy davomat" value={selectedStudent.davomat} prefix={<CheckCircleOutlined />} valueStyle={{ color: '#10b981' }} />
+              </Col>
+              <Col xs={24} sm={12}>
+                <Statistic title="Umumiy o'zlashtirish" value={selectedStudent.ozlashtirish} prefix={<StarOutlined />} valueStyle={{ color: '#f59e0b' }} />
+              </Col>
+            </Row>
+
+            <h3 className="text-lg font-semibold mb-3 text-gray-700">Darslar bo'yicha hisobot</h3>
+            <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+              <Timeline>
+                {dateColumnIndexes.map(idx => {
+                  const status = selectedStudent[`davomat_${idx}`];
+                  const mastery = selectedStudent[`davomat_${idx + 1}`];
+                  const izoh = selectedStudent[`davomat_${idx + 2}`];
+                  const date = header[idx];
+
+                  let color = 'blue';
+                  let icon = <ClockCircleOutlined />;
+                  if (status === '100%') {
+                    color = 'green';
+                    icon = <CheckCircleOutlined />;
+                  } else if (status === '0%') {
+                    color = 'red';
+                    icon = <CloseCircleOutlined />;
                   }
-                ]}
-                dataSource={dateColumnIndexes.map(idx => ({
-                  key: idx,
-                  [`davomat_${idx}`]: selectedStudent[`davomat_${idx}`],
-                  mastery: selectedStudent[`davomat_${idx + 1}`],
-                  izoh: selectedStudent[`davomat_${idx + 2}`]
-                }))}
-                pagination={false}
-              />
+
+                  return (
+                    <Timeline.Item key={idx} color={color} dot={icon}>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-gray-800">{date}</p>
+                          <div className="flex items-center gap-4">
+                            <Tag color="yellow">{`O'zlashtirish: ${mastery || 'N/A'}`}</Tag>
+                          </div>
+                        </div>
+                        {izoh && (
+                          <div className="text-sm text-gray-600 bg-gray-100 p-2 rounded-md max-w-xs flex items-center gap-2">
+                            <CommentOutlined /><span>{izoh}</span>
+                          </div>
+                        )}
+                      </div>
+                    </Timeline.Item>
+                  );
+                }).reverse()}
+              </Timeline>
             </div>
           </div>
         )}
