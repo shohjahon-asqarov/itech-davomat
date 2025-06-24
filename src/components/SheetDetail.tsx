@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   Table,
@@ -27,10 +27,8 @@ import {
   UserOutlined,
   ClockCircleOutlined,
   ArrowLeftOutlined,
-  TrophyOutlined,
   FireOutlined,
   TeamOutlined,
-  WarningOutlined,
   StarOutlined,
   DownloadOutlined,
   SearchOutlined,
@@ -138,9 +136,9 @@ const SheetDetail: React.FC = () => {
   const lastDateIdx = dateColumnIndexes.length > 0 ? dateColumnIndexes[dateColumnIndexes.length - 1] : -1;
 
   // Har bir o'quvchi uchun eng so'nggi sananing "Davomat (%)" ustunini tekshiramiz
-  const presentCount = lastDateIdx !== -1 ? dataSource.filter(row => row[`davomat_${lastDateIdx}`] === '100%').length : 0;
-  const absentCount = lastDateIdx !== -1 ? dataSource.filter(row => row[`davomat_${lastDateIdx}`] === '0%').length : 0;
-  const attendanceRate = dataSource.length > 0 ? Math.round((presentCount / dataSource.length) * 100) : 0;
+  // const presentCount = lastDateIdx !== -1 ? dataSource.filter(row => row[`davomat_${lastDateIdx}`] === '100%').length : 0;
+  // const absentCount = lastDateIdx !== -1 ? dataSource.filter(row => row[`davomat_${lastDateIdx}`] === '0%').length : 0;
+  // const attendanceRate = dataSource.length > 0 ? Math.round((presentCount / dataSource.length) * 100) : 0;
 
   // Telegramga yuborish uchun tanlangan sananing davomatini chiqarish
   const extractAttendanceByDate = (dateIdx: number) => {
@@ -230,7 +228,7 @@ const SheetDetail: React.FC = () => {
   const absentCountFiltered = filteredDateIdx !== -1 ? filteredDataSource.filter(row => row[`davomat_${filteredDateIdx}`] === '0%').length : 0;
   const attendanceRateFiltered = filteredDataSource.length > 0 ? Math.round((presentCountFiltered / filteredDataSource.length) * 100) : 0;
   // O'rtacha o'zlashtirish (faqat tanlangan sana uchun)
-  let avgMasteryFiltered = 0;
+  /* let avgMasteryFiltered = 0;
   if (filteredDateIdx !== -1 && filteredDataSource.length > 0) {
     let sum = 0, count = 0;
     filteredDataSource.forEach(row => {
@@ -241,7 +239,7 @@ const SheetDetail: React.FC = () => {
       }
     });
     avgMasteryFiltered = count > 0 ? Math.round(sum / count) : 0;
-  }
+  } */
 
   // Excel yuklab olish
   const handleDownloadExcel = () => {
